@@ -8,11 +8,11 @@ const TeamCard = ({item}) => {
   return (
     <div className='flex p-[1rem] h-full flex-col gap-[1rem] justify-center items-center font-nunito text-black'>
         <Image src={item.picture} height={100} width={100} alt ={item.name} className="rounded-full border-black border drop-shadow object-cover"/>
-        <p className='text-[20px] md:text-[20px] font-semibold h-[4rem] drop-shadow-2xl'>@{item.name}</p>
-        <p className='text-[20px] md:text-[20px] font-semibold h-[4rem] drop-shadow-2xl'>{item.designation}</p>
+        <p className='text-[20px] md:text-[20px] font-semibold h-[4rem] drop-shadow-2xl font-fredoka'>@{item.name}</p>
+        <p className='text-[20px] md:text-[20px] font-semibold h-[4rem] drop-shadow-2xl font-fredoka'>{item.designation}</p>
         <div className='flex gap-4'>
             {link ? <Image src={twit} height={30} width={30} className="bg-black p-1"/>:<div className='w-full h-full flex justify-center'>
-            <p className='text-[15px] over md:text-[14px] h-[10rem] md:h-[6rem] drop-shadow-2xl'>{item.desc}</p>
+            <p className='text-[15px] over md:text-[14px] h-[7rem] md:h-[6rem] font-nunito drop-shadow-2xl'>{item.desc}</p>
             </div>}
         </div>
     </div>
