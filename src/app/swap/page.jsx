@@ -34,37 +34,38 @@ const Page = () => {
 
   useEffect(() => {
     if (window.ethereum) {
-        window.ethereum.request({ method: 'eth_requestAccounts' })
-            .then(accounts => {
-                if (accounts.length > 0) {
-                    setAccount(accounts[0]);
-                    web3.eth.defaultAccount = accounts[0];
-                    console.log("Account set:", accounts[0]);
-                } else {
-                    alert("No accounts found. Please connect your wallet.");
-                }
-            })
-            .catch(error => {
-                console.error("Error fetching accounts: ", error);
-                alert("Please connect your Ethereum wallet.");
-            });
-
-        window.ethereum.on('accountsChanged', (accounts) => {
-            if (accounts.length > 0) {
-                setAccount(accounts[0]);
-                web3.eth.defaultAccount = accounts[0];
-                console.log("Account changed:", accounts[0]);
-            } else {
-                setAccount('');
-                console.log("Account disconnected");
-            }
+      window.ethereum
+        .request({ method: "eth_requestAccounts" })
+        .then((accounts) => {
+          if (accounts.length > 0) {
+            setAccount(accounts[0]);
+            web3.eth.defaultAccount = accounts[0];
+            console.log("Account set:", accounts[0]);
+          } else {
+            alert("No accounts found. Please connect your wallet.");
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching accounts: ", error);
+          alert("Please connect your Ethereum wallet.");
         });
 
-        window.ethereum.on('chainChanged', (chainId) => {
-            window.location.reload();
-        });
+      window.ethereum.on("accountsChanged", (accounts) => {
+        if (accounts.length > 0) {
+          setAccount(accounts[0]);
+          web3.eth.defaultAccount = accounts[0];
+          console.log("Account changed:", accounts[0]);
+        } else {
+          setAccount("");
+          console.log("Account disconnected");
+        }
+      });
+
+      window.ethereum.on("chainChanged", (chainId) => {
+        window.location.reload();
+      });
     }
-}, []);
+  }, []);
 
   const getQuote = async () => {
     if (!amountIn || isNaN(amountIn) || parseFloat(amountIn) <= 0) {
@@ -76,7 +77,6 @@ const Page = () => {
     const decimalsOut = tokenDecimals[tokenOut];
     const path = [tokenAddresses[tokenIn], tokenAddresses[tokenOut]];
 
-    
     const amountInRounded = (
       parseFloat(amountIn) * Math.pow(10, decimalsIn)
     ).toString();
@@ -85,7 +85,7 @@ const Page = () => {
     try {
       const amountsOut = await getAmountsOut(amountInWei, path);
       const amountOutWei = amountsOut[1];
-      
+
       const amountOutFormatted = amountOutWei / Math.pow(10, decimalsOut);
       setAmountOut(amountOutFormatted);
     } catch (error) {
@@ -103,7 +103,6 @@ const Page = () => {
     const decimalsOut = tokenDecimals[tokenOut];
     const path = [tokenAddresses[tokenIn], tokenAddresses[tokenOut]];
 
-    
     const amountInRounded = (
       parseFloat(amountIn) * Math.pow(10, decimalsIn)
     ).toFixed(0);
