@@ -23,18 +23,37 @@ export const addNetwork =async(networkConfig)=>{
     }
 }
 
-export const connectContract =async(address, abi, account)=>{
+
+export const getSwapData = async(amount,path)=>{
     try {
-        if(window.ethereum){
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
-            const signer = provider.getSigner(account);
-            const contract = new ethers.Contract(address, abi, signer);
-            return contract;
-        } else return null
+        const baseLink = 'https://aggregator.icecreamswap.com/60808'
+        const from = path[0]
+        const to = path[1]
+        console.log(amount)
+        const data  = await fetch(`${baseLink}?src=${from}&dst=${to}&amount=${amount}`);
     } catch (error) {
-        console.log(error);
+        console.log(error)
     }
 }
+
+export const connectContract = async (address, abi, account) => {
+    try {
+
+        // Request account access if needed
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+        // Create a new Web3 provider and signer
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner(account);
+
+        // Connect to the contract
+        const contract = new ethers.Contract(address, abi, signer);
+        return contract;
+    } catch (error) {
+        console.error("Failed to connect to contract:", error);
+        return null;
+    }
+};
 
 export const connectMetamask = async()=>{
     try {

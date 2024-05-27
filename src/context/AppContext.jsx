@@ -1,7 +1,7 @@
 'use client'
 
 import React, {useState , useEffect} from "react"
-import {BOB_MAINNET, IceRouterAbi , IceRouterAddress} from "../utils/constants"
+import {BOB_MAINNET, IceRouterAbi } from "../utils/constants"
 import { ethers } from "../../node_modules/ethers/lib/index"
 import { 
     addNetwork,
@@ -20,7 +20,7 @@ import {
 export const AppContext = React.createContext();
 
 export const AppProvider =({children})=>{
-
+    const IceRouterAddress = "0x698a912F8CA34Df9b46E6Ea4A2B2DB0B7151b083" 
     const [user , setUser] = useState({});
     const [act , setAct] = useState(0);
     const [states, setStates] = useState({
@@ -31,8 +31,8 @@ export const AppProvider =({children})=>{
     const [dexStates , setDexStates] = useState({
         amountOut:'',
         amountIn:'',
-        fromToken:'',
-        toToken:'',
+        tokenIn:'',
+        tokenOut:'',
         type:'NATIVE'
     })
     const [loading , setLoading] = useState(false);
@@ -41,14 +41,14 @@ export const AppProvider =({children})=>{
         try {
             const chain = await getChainId();
             const accounts = await connectMetamask();
-            await resolveChain()
-            console.log(accounts)
+            await resolveChain(chain)
+            
             if(accounts.wallet){
                 const res = walletSign("BOTS OF BITCOIN wants you to sign in and confirm wallet ownership. ARE YOU FRIKKIN READY TO RAMPAGE !!?" , accounts.wallet);                
                 res.then(()=>{
-                    setUser({...user , wallet: accounts.wallet});
+                    setUser({...user , wallet:accounts.wallet});
                 }).catch((err)=>{
-                    alert("Sign In failed")
+                    console.log(err)
                 })
             }
         } catch (error) {
@@ -56,11 +56,12 @@ export const AppProvider =({children})=>{
         }
     }
 
-    const resolveChain=async()=>{
+    const resolveChain=async(chain)=>{
         try {
             if(user.wallet){
                 if(chain != BOB_MAINNET[0].chainId){
                     addNetwork(BOB_MAINNET);
+                    changeNetwork(BOB_MAINNET[0].chainId)
                 }
             }
         } catch (error) {
@@ -84,7 +85,7 @@ export const AppProvider =({children})=>{
     try {
         const res = await fetch("https://fusion-api.gobob.xyz/partners");
         const data = await res.json();
-        setFusionData({...fusionData, apiResponse: data, ok: res.ok})
+        setFusionData({...fusionData, data: data, ok: res.ok})
         console.log(data)
     } catch (error) {
         console.log(error)
@@ -94,16 +95,6 @@ export const AppProvider =({children})=>{
     ///////ICE CREAM SWAP CALLS /////////////////
 
     /////helpers////////
-    const iceRouterObj =async()=>{
-        try {
-            if(user.wallet){
-                const contract = await connectContract(IceRouterAddress, IceRouterAbi, user.wallet)
-                return contract   
-            }
-        } catch (error) {
-            console.log(error)
-        }
-    }
     ////////////////////
 
     const WETH =async()=>{
@@ -118,18 +109,25 @@ export const AppProvider =({children})=>{
 
     const getAmountsOut = async(amountIn, path)=>{
         try {
-            const contract = iceRouterObj();
-            const amountOut =await contract.getAmountsOut(amountIn, path);
-            return amountOut
+            if(user.wallet && window.ethereum){
+                console.log("USER WALLET :",user.wallet , "ROUTER :", IceRouterAddress)
+                const contract = await connectContract(IceRouterAddress, IceRouterAbi, user.wallet)
+                console.log("CA :" , contract)
+                const amountOut =await contract.getAmountsOut(amountIn, path);
+                return amountOut
+            }
         } catch (error) {
             console.log(error);
         }
     }
 
+    
+
     const getAmountsIn = async(amountOut) =>{
         try {
-            const contract = iceRouterObj();
+            const contract = await connectContract(IceRouterAddress, IceRouterAbi, user.wallet)
             const amountIn = await contract.getAmountsIn(amountOut, path);
+            return amountIn
         } catch (error) {
             console.log(error)
         }
@@ -147,7 +145,7 @@ export const AppProvider =({children})=>{
 
     return(
         <>
-        <AppContext.Provider value={{connectWallet, user, act , fusionData,setAct, states, setStates, openMobileMenu, getFusionData, resolveChain , dexStates , setDexStates}}>
+        <AppContext.Provider value={{connectWallet, user, act , fusionData,setAct, states, setStates, openMobileMenu, getFusionData, resolveChain , dexStates , setDexStates , getAmountsIn , getAmountsOut, WETH}}>
             {children}
         </AppContext.Provider>
         </>
