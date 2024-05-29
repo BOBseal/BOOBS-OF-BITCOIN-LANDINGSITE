@@ -27,7 +27,7 @@ const Partners = () => {
         {partnerInfo.map((o,k)=>(
         <div key={k} className='flex justify-center items-center'>
         <Link href={o.link} target={'_blank'}>
-          <Image src={o.logo} width={400} height={400} alt="BOB Logo" className={`w-[${o.imgSizeData.sm}]  h-[${o.imgSizeData.sm}] hover:scale-105 md:w-[${o.imgSizeData.md}] md:h-[${o.imgSizeData.md}] lg:w-[${o.imgSizeData.lg}] lg:h-[${o.imgSizeData.lg}] flex justify-center cursor-pointer`}/>
+          <Image src={o.logo} width={180} height={180} alt="BOB Logo" className='w-[150px] hover:scale-105 md:w-[180px] lg:w-[240px] flex justify-center cursor-pointer'/>
         </Link>
         </div>
         ))}
