@@ -83,15 +83,15 @@ const MobileNav :React.FC <NavbarProps>=({openMobileMenu , userWallet, connectWa
       <div className='flex flex-col h-full border-b-[20px] border-black w-full justify-evenly items-center'>
         <div className='flex flex-col h-[80%] justify-center gap-[2rem]'>
         <Link href={'/'}>
-          <button className=' font-nunito text-black text-[20px]' onClick={()=>openMobileMenu()}>Home</button> 
+          <button className=' font-nunito text-black text-[22px]' onClick={()=>openMobileMenu()}>Home</button> 
           </Link>
-          <p onClick={()=> al()} className=' font-nunito text-black text-[20px]'>Mint</p>
-          <p onClick={()=> al()} className=' font-nunito text-black text-[20px]'>Lottery</p>
-          <p onClick={()=> al()} className=' font-nunito text-black text-[20px]'>Vaults</p>
+          <p onClick={()=> al()} className=' font-nunito text-black text-[22px]'>Mint</p>
+          <p onClick={()=> al()} className=' font-nunito text-black text-[22px]'>Lottery</p>
+          <p onClick={()=> al()} className=' font-nunito text-black text-[22px]'>Vaults</p>
           <Link href={'https://botsofbtc.notion.site/BOTS-OF-BITCOIN-27ab822513f5459d861d07a6f11271ba?pvs=4'} target={'_blank'}>
-          <p className=' font-nunito text-black text-[20px]'>Docs</p>
+          <p onClick={()=> al()} className=' font-nunito text-black text-[22px]'>Docs</p>
           </Link>
-          <button className='text-black font-nunito text-[22px]'>{userWallet ? <>0x...{userWallet.slice(37)}</>:<div onClick={()=>connectWallet()} >LOGIN</div>}</button>
+          <button onClick={()=>connectWallet()} className='text-black font-nunito text-[22px]'>{userWallet ? <>0x...{userWallet.slice(37)}</>:"Log In"}</button>
         </div>
         <button className='h-[4rem] font-nunito text-[22px] text-black p-[1rem] w-[12rem] justify-center flex ' onClick={()=>openMobileMenu()}>CLOSE</button>
       </div>
