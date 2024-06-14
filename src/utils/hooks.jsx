@@ -29,8 +29,10 @@ export const getSwapData = async(amount,path)=>{
         const baseLink = 'https://aggregator.icecreamswap.com/60808'
         const from = path[0]
         const to = path[1]
+        console.log(from, to)
         console.log(amount)
         const data  = await fetch(`${baseLink}?src=${from}&dst=${to}&amount=${amount}`);
+        return data
     } catch (error) {
         console.log(error)
     }

@@ -31,8 +31,8 @@ export const AppProvider =({children})=>{
     const [dexStates , setDexStates] = useState({
         amountOut:'',
         amountIn:'',
-        tokenIn:'',
-        tokenOut:'',
+        tokenIn:'0x4200000000000000000000000000000000000006',
+        tokenOut:'0x05D032ac25d322df992303dCa074EE7392C117b9',
         type:'NATIVE'
     })
     const [loading , setLoading] = useState(false);

@@ -18,8 +18,8 @@ export const partnerInfo =[
 ]
 
 export const supportedList={
-    eth:{name:"ETHEREUM" , ticker:"ETH", address:"0x4200000000000000000000000000000000000006", logo:null , decimals:18},
     weth:{name:"WRAPPED ETHER" , ticker:"WETH", address:"0x4200000000000000000000000000000000000006", logo:null , decimals:18},
+    eth:{name:"ETHEREUM" , ticker:"ETH", address:"0x4200000000000000000000000000000000000006", logo:null , decimals:18},
     wbtc:{name:"WRAPPED BTC" , ticker:"WBTC", address:"0x03C7054BCB39f7b2e5B2c7AcB37583e32D70Cfa3", logo:null, decimals:8},
     usdt:{name:"USDT" , ticker:"USDT", address:"0x05D032ac25d322df992303dCa074EE7392C117b9", logo:null, decimals:6},
     usdc:{name:"USDC" , ticker:"USDC", address:"0xe75D0fB2C24A55cA1e3F96781a2bCC7bdba058F0", logo:null, decimals:6},

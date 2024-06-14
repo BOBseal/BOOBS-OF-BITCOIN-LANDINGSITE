@@ -15,8 +15,10 @@ import { getSwapData } from "@/utils/hooks";
 //const web3 = new Web3(`https://rpc.gobob.xyz`);
 
 const Page = () => {
-    const {dexStates , setDexStates, getAmountsOut,user, connectWallet} = useContext(AppContext);
-    
+    const {dexStates , setDexStates, getAmountsOut,user, connectWallet, getFusionData} = useContext(AppContext);
+    const [states, setStates] = useState({
+      amountOut:''
+    })
     const setTokenIn =(e)=>{
         setDexStates({...dexStates, tokenIn:e})
     }
@@ -26,15 +28,25 @@ const Page = () => {
     }
 
     const setAmountIn= async(e)=>{
+      getFusionData();
         setDexStates({...dexStates, amountIn:e})
+        
         const path = [dexStates.tokenIn,dexStates.tokenOut]
         const tokenOut = dexStates.tokenOut;
+        console.log(tokenOut)
         const tknOutD = supportedList[tokenOut];
-        const decimals = tknOutD ? tknOutD.decimals : 18;
-        let amount
-        console.log(amount)
-        const a = await getSwapData(e.toString(),path)
-        console.log(a)
+        const decimals = tknOutD.decimals;
+        //let amount
+        //console.log(amount)
+        const vall = ethers.utils.parseUnits(e, decimals);
+        const valInt = parseInt(Number(vall));
+        const a = await getSwapData(valInt,path)
+        const res =await a.json();
+        console.log(res)
+        const outAmountBG = ethers.BigNumber.from(res.toAmount);
+        const oA = ethers.utils.formatUnits(outAmountBG,decimals);
+        console.log(oA)
+        setStates({...states,amountOut:oA})
         //if(dexStates.amountIn){
         //  amount = ethers.utils.parseUnits(dexStates.amountIn , decimals)
         //}
