@@ -10,7 +10,8 @@ import updown from "../../assets/updownarrow.svg";
 import { AppContext } from "@/context/AppContext";
 import { getEthBalance } from "@/utils/hooks";
 import { ethers } from "../../../node_modules/ethers/lib/index";
-import { getSwapData } from "@/utils/hooks";
+import { getSwapData, getErc20CA } from "@/utils/hooks";
+import { IceCream } from "@/utils/constants";
 
 //const web3 = new Web3(`https://rpc.gobob.xyz`);
 
@@ -44,7 +45,7 @@ const Page = () => {
         //console.log(amount)
         const vall = ethers.utils.parseUnits(e,tokenIn.decimals);
         const valInt = parseInt(Number(vall));
-        const a = await getSwapData(valInt,path)
+        const a = await getSwapData(valInt,path,IceCream[0].contract)
         //console.log(a);
         const res =await a.json();
         console.log(res)
@@ -64,9 +65,12 @@ const Page = () => {
 
     const swapHandle = async()=>{
       try {
-        
+        const tokenIn = findTokenByTicker(dexStates.tokenIn);
+        const am = ethers.utils.parseUnits(dexStates.amountIn,tokenIn.decimals);
+        console.log(am)
+        await executeSwap(states.data,tokenIn.address,am);
+      
         //console.log(states.data)
-       await executeSwap(states.data)
       } catch (error) {
         console.log(error)
       }

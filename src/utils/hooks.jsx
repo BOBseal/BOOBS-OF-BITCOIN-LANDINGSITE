@@ -26,13 +26,13 @@ export const addNetwork =async(networkConfig)=>{
 }
 
 
-export const getSwapData = async(amount,path)=>{
+export const getSwapData = async(amount,path,from)=>{
     try {
         const baseLink = 'https://aggregator.icecreamswap.com/60808'
         const from = path[0]
         const to = path[1]
         
-        const data  = await fetch(`${baseLink}?src=${from}&dst=${to}&amount=${amount}`);
+        const data  = await fetch(`${baseLink}?src=${from}&dst=${to}&amount=${amount}&from=${from}`);
         return data
     } catch (error) {
         console.log(error)
@@ -48,6 +48,16 @@ export const getErc20Decimals=async(token, user)=>{
         console.log(error)
     }
 }
+
+export const getErc20CA=async(token, user)=>{
+    try {
+        const ca = await connectContract(token, IERC20ABI, user);
+        return ca;
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 
 export const connectContract = async (address, abi, account) => {
     try {
@@ -70,7 +80,7 @@ export const connectContract = async (address, abi, account) => {
 
 export const getIceContract =async(addr)=>{
     try {
-        const ca = connectContract(IceCream[0].contract , IceCream[0].abi, addr);
+        const ca = connectContract(IceCream[0].contract ,IceCream[0].abi, addr);
         return ca;
     } catch (error) {
         console.log(error);

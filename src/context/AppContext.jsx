@@ -1,7 +1,7 @@
 'use client'
 
 import React, {useState , useEffect} from "react"
-import {BOB_MAINNET, IceRouterAbi } from "../utils/constants"
+import {BOB_MAINNET, IceCream, IceRouterAbi } from "../utils/constants"
 import { ethers } from "../../node_modules/ethers/lib/index"
 import { 
     addNetwork,
@@ -15,7 +15,8 @@ import {
     swapExactEthToToken,
     swapExactTokenToEth,
     swapExactTokenToToken,
-    getIceContract
+    getIceContract,
+    getErc20CA
  } from "../utils/hooks"
 
 export const AppContext = React.createContext();
@@ -123,19 +124,23 @@ export const AppProvider =({children})=>{
         }
     }
 
-    const executeSwap=async(dataObj)=>{
+    const executeSwap=async(dataObj,token,amount)=>{
         try {
             const ca = await getIceContract(user.wallet);
-            console.log(ca);
+           
             if(!dataObj){
                 alert("Enter Amount")
                 return
             }
-            //console.log(dataObj)
-            console.log(dataObj.tx.to,dataObj.tx.data)
-            const exec = await ca.swap(dataObj.tx.to,dataObj.tx.data,{value:dataObj.tx.value});
-            console.log(exec)
-            return exec
+            const caTkn = await getErc20CA(token,user.wallet);
+            console.log(caTkn)
+            //const tt = await caTkn.approve(IceCream[0].contract, amount);
+            //tt.then(async()=>{
+                const exec = await ca.swap(dataObj.tx.to,dataObj.tx.data,token,amount,{value:dataObj.tx.value, gasLimit:500000});
+                console.log(exec)
+            //}).catch(e=>{
+                //console.log(e);
+            //})
         } catch (error) {
             console.log(error)
         }
