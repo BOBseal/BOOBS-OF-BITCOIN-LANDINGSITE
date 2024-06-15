@@ -10,7 +10,7 @@ import updown from "../../assets/updownarrow.svg";
 import { AppContext } from "@/context/AppContext";
 import { getEthBalance } from "@/utils/hooks";
 import { ethers } from "../../../node_modules/ethers/lib/index";
-import { getSwapData, getErc20CA } from "@/utils/hooks";
+import { getSwapData, getErc20CA, getErc20Balances } from "@/utils/hooks";
 import { IceCream } from "@/utils/constants";
 
 //const web3 = new Web3(`https://rpc.gobob.xyz`);
@@ -21,13 +21,24 @@ const Page = () => {
       amountOut:'',
       data:null
     })
-    const setTokenIn =(e)=>{
+
+    useEffect(() => {
+      if(!user.wallet){
+        connectWallet();
+      }
+    }, [user.wallet])
+    
+    const setTokenIn =async(e)=>{
       if(dexStates.tokenOut===e){
 
         alert("Token In & Token Out Cannot be Same")
         return
       }  
-      setDexStates({...dexStates, tokenIn:e})
+      const tokenOut = findTokenByTicker(e); 
+      console.log(tokenOut) 
+      const balance = await getErc20Balances(tokenOut.address,user.wallet);
+      console.log(balance)
+      setDexStates({...dexStates, tokenIn:e , inBalance:balance})
         
     }
 
@@ -36,12 +47,14 @@ const Page = () => {
       return Object.values(supportedList).find(token => token.ticker === ticker);
     };
 
-    const setTokenOut=(e)=>{
+    const setTokenOut=async(e)=>{
       if(dexStates.tokenIn===e){
         alert("Token In & Token Out Cannot be Same")
         return
-      }  
-      setDexStates({...dexStates, tokenOut:e})
+      }
+      const tokenOut = findTokenByTicker(e);  
+      const balance = await getErc20Balances(tokenOut.address,user.wallet);
+      setDexStates({...dexStates, tokenOut:e , outBalance:balance})
         
     }
 
@@ -59,8 +72,8 @@ const Page = () => {
         //let amount
         //console.log(amount)
         const vall = ethers.utils.parseUnits(e,tokenIn.decimals);
-        const valInt = parseInt(Number(vall));
-        const a = await getSwapData(valInt,path,user.wallet)
+        //const valInt = parseInt(Number(vall));
+        const a = await getSwapData(vall,path,user.wallet)
         //console.log(a);
         const res =await a.json();
         console.log(res)
@@ -83,8 +96,10 @@ const Page = () => {
         const tokenIn = findTokenByTicker(dexStates.tokenIn);
         const am = ethers.utils.parseUnits(dexStates.amountIn,tokenIn.decimals);
         console.log(am)
-        await executeSwap(states.data,tokenIn.address,am);
-      
+        const aa = await executeSwap(states.data,tokenIn.address,am);
+        aa.wait(1).then(()=>{
+          window.location.reload();
+        })
         //console.log(states.data)
       } catch (error) {
         console.log(error)
@@ -97,7 +112,7 @@ const Page = () => {
         <div className="w-[95%] lg:w-[40%] md:w-[75%] h-[38rem] md:h-[36rem] rounded-xl bg-[#352f31] bg-cover flex-col border-[#E5BD19] border-b drop-shadow-xl flex">
           <div className="flex bg-[#E5BD19] w-full h-[10%] rounded-t-xl">
             <h1 className="flex items-center w-full justify-center font-fredoka text-[35px] md:text-[45px] font-[700]">
-              SWAP
+              SWAP (BETA)
             </h1>
           </div>
           <div className="w-full h-[90%] flex flex-col text-white">
@@ -125,7 +140,7 @@ const Page = () => {
                     </select>
                   </div>
                   <p className="flex text-[12px] drop-shadow-lg">
-                    Balances: 0.00000000001 ETH
+                    Balances: {dexStates.inBalance} {dexStates.tokenIn}
                   </p>
                 </div>
                 <div className="w-full justify-center items-center flex">
@@ -133,6 +148,7 @@ const Page = () => {
                     type="text"
                     placeholder="Amount"
                     className="w-full outline-none text-white px-4 bg-black h-[4rem] drop-shadow-lg md:h-[8rem] rounded-xl"
+                    defaultValue={0}
                     value={dexStates.amountIn}
                     onChange={(e) => setAmountIn(e.target.value)}
                   />
@@ -162,7 +178,7 @@ const Page = () => {
                     </select>
                   </div>
                   <p className="flex text-[12px] drop-shadow-lg">
-                    Balances: 0.00000000001 ETH
+                    Balances: {dexStates.outBalance} {dexStates.tokenOut}
                   </p>
                 </div>
                 <div className="w-full justify-center items-center flex">

@@ -1,5 +1,5 @@
 'use client'
-
+import { supportedList } from "@/configs/config"
 import React, {useState , useEffect} from "react"
 import {BOB_MAINNET, IceCream, IceRouterAbi } from "../utils/constants"
 import { ethers } from "../../node_modules/ethers/lib/index"
@@ -16,7 +16,8 @@ import {
     swapExactTokenToEth,
     swapExactTokenToToken,
     getIceContract,
-    getErc20CA
+    getErc20CA,
+    getErc20Balances
  } from "../utils/hooks"
 
 export const AppContext = React.createContext();
@@ -35,10 +36,14 @@ export const AppProvider =({children})=>{
         amountIn:'',
         tokenIn:'WETH',
         tokenOut:'USDT',
-        type:'NATIVE'
+        type:'NATIVE',
+        outBalance:'',
+        inBalance:''
     })
     const [loading , setLoading] = useState(false);
-    
+    const findTokenByTicker = (ticker) => {
+        return Object.values(supportedList).find(token => token.ticker === ticker);
+    };
     const connectWallet = async()=>{
         try {
             const chain = await getChainId();
@@ -46,12 +51,17 @@ export const AppProvider =({children})=>{
             await resolveChain(chain)
             
             if(accounts.wallet){
-                const res = walletSign("BOTS OF BITCOIN wants you to sign in and confirm wallet ownership. ARE YOU FRIKKIN READY TO RAMPAGE !!?" , accounts.wallet);                
-                res.then(()=>{
+                const res = await walletSign("BOTS OF BITCOIN wants you to sign in and confirm wallet ownership. ARE YOU FRIKKIN READY TO RAMPAGE !!?" , accounts.wallet);                
+                console.log(res);
+                if(res){
                     setUser({...user , wallet:accounts.wallet});
-                }).catch((err)=>{
-                    console.log(err)
-                })
+                    const tokenIn = findTokenByTicker(dexStates.tokenIn);
+                    const tokenOut = findTokenByTicker(dexStates.tokenOut);
+                    const tokenInBalances = await getErc20Balances(tokenIn.address,accounts.wallet);
+                    const tokenOutBalances = await getErc20Balances(tokenOut.address,accounts.wallet);
+                    console.log(tokenInBalances,tokenOutBalances)
+                    setDexStates({...dexStates,outBalance:tokenOutBalances , inBalance:tokenInBalances})
+                }
             }
         } catch (error) {
             console.log(error)
@@ -153,7 +163,7 @@ export const AppProvider =({children})=>{
             //})
         })} else {
             const execs = await ca.swap(dataObj.tx.to,dataObj.tx.data,token,amount,{value:dataObj.tx.value});
-            execs.wait(1).then(async(a)=>{alert(`swap complete txhash: ${exec.hash}`);})
+            execs.wait(1).then(async(a)=>{alert(`swap complete txhash: ${execs.hash}`);})
         }
         } catch (error) {
             console.log(error)

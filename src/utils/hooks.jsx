@@ -58,6 +58,19 @@ export const getErc20CA=async(token, user)=>{
     }
 }
 
+export const getErc20Balances=async(address ,user)=>{
+    try {
+        const ca = await getErc20CA(address , user);
+        const d = await ca.decimals();
+        const decimals = parseInt(Number(d));
+        const balance = await ca.balanceOf(user);
+        const parseBalance = ethers.utils.formatUnits(balance,decimals);
+        return parseBalance
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 
 export const connectContract = async (address, abi, account) => {
     try {
