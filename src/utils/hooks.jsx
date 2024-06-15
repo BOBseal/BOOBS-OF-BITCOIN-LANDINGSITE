@@ -26,13 +26,13 @@ export const addNetwork =async(networkConfig)=>{
 }
 
 
-export const getSwapData = async(amount,path,from)=>{
+export const getSwapData = async(amount,path,_from)=>{
     try {
         const baseLink = 'https://aggregator.icecreamswap.com/60808'
         const from = path[0]
         const to = path[1]
         
-        const data  = await fetch(`${baseLink}?src=${from}&dst=${to}&amount=${amount}&from=${from}`);
+        const data  = await fetch(`${baseLink}?src=${from}&dst=${to}&amount=${amount}&from=${_from}`);
         return data
     } catch (error) {
         console.log(error)

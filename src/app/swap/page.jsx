@@ -45,7 +45,7 @@ const Page = () => {
         //console.log(amount)
         const vall = ethers.utils.parseUnits(e,tokenIn.decimals);
         const valInt = parseInt(Number(vall));
-        const a = await getSwapData(valInt,path,IceCream[0].contract)
+        const a = await getSwapData(valInt,path,user.wallet)
         //console.log(a);
         const res =await a.json();
         console.log(res)
@@ -123,15 +123,7 @@ const Page = () => {
                   />
                 </div>
               </div>
-              <div className="flex h-[13%] justify-center items-center">
-                <Image
-                  src={updown}
-                  height={50}
-                  width={50}
-                  alt="UP DOWN"
-                  className="drop-shadow-lg cursor-pointer hover:scale-105"
-                />
-              </div>
+             
               <div className="flex justify-evenly flex-col h-[45%] pl-[1rem] pr-[1rem]">
                 <div className="w-full flex flex-col md:items-center md:flex-row justify-between gap-[2rem]">
                   <div className="flex flex-col md:flex-row md:items-center gap-[1rem] md:w-[50%]">
