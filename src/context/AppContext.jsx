@@ -14,7 +14,8 @@ import {
     walletSign,
     swapExactEthToToken,
     swapExactTokenToEth,
-    swapExactTokenToToken
+    swapExactTokenToToken,
+    getIceContract
  } from "../utils/hooks"
 
 export const AppContext = React.createContext();
@@ -31,8 +32,8 @@ export const AppProvider =({children})=>{
     const [dexStates , setDexStates] = useState({
         amountOut:'',
         amountIn:'',
-        tokenIn:'0x4200000000000000000000000000000000000006',
-        tokenOut:'0x05D032ac25d322df992303dCa074EE7392C117b9',
+        tokenIn:'WETH',
+        tokenOut:'USDT',
         type:'NATIVE'
     })
     const [loading , setLoading] = useState(false);
@@ -107,9 +108,10 @@ export const AppProvider =({children})=>{
         }
     }
 
-    const getAmountsOut = async(amountIn, path)=>{
+    const getAmountsOut = async(path)=>{
         try {
             if(user.wallet && window.ethereum){
+                
                 console.log("USER WALLET :",user.wallet , "ROUTER :", IceRouterAddress)
                 const contract = await connectContract(IceRouterAddress, IceRouterAbi, user.wallet)
                 console.log("CA :" , contract)
@@ -121,21 +123,19 @@ export const AppProvider =({children})=>{
         }
     }
 
-    
-
-    const getAmountsIn = async(amountOut) =>{
+    const executeSwap=async(dataObj)=>{
         try {
-            const contract = await connectContract(IceRouterAddress, IceRouterAbi, user.wallet)
-            const amountIn = await contract.getAmountsIn(amountOut, path);
-            return amountIn
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    const executeSwap=async()=>{
-        try {
-            
+            const ca = await getIceContract(user.wallet);
+            console.log(ca);
+            if(!dataObj){
+                alert("Enter Amount")
+                return
+            }
+            //console.log(dataObj)
+            console.log(dataObj.tx.to,dataObj.tx.data)
+            const exec = await ca.swap(dataObj.tx.to,dataObj.tx.data,{value:dataObj.tx.value});
+            console.log(exec)
+            return exec
         } catch (error) {
             console.log(error)
         }
@@ -145,7 +145,7 @@ export const AppProvider =({children})=>{
 
     return(
         <>
-        <AppContext.Provider value={{connectWallet, user, act , fusionData,setAct, states, setStates, openMobileMenu, getFusionData, resolveChain , dexStates , setDexStates , getAmountsIn , getAmountsOut, WETH}}>
+        <AppContext.Provider value={{connectWallet, user, act , fusionData,setAct, states, setStates, openMobileMenu, getFusionData, resolveChain , dexStates , setDexStates , getAmountsOut, WETH, executeSwap}}>
             {children}
         </AppContext.Provider>
         </>

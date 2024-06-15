@@ -1,4 +1,6 @@
 import A from "./IceCreamRouter.json"
+import cc from "./ABIS/Sp_IcyExecutioner.json"
+
 export const BOB_MAINNET = [
     {
         chainId:"0xed88",
@@ -238,3 +240,7 @@ export const IERC20ABI = [
 ]
 
 export const IceRouterAddress = "0x698a912F8CA34Df9b46E6Ea4A2B2DB0B7151b083" 
+
+export const IceCream = [
+    {contract:"0x3d80DcbcebD458cBdBe5e8c73BeFF16EF5e6A70b",abi:cc.abi}
+]

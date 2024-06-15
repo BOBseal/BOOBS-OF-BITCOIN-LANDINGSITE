@@ -1,5 +1,7 @@
 import React from "react";
 import { ethers } from "ethers";
+import { BOB_MAINNET , IERC20ABI} from "./constants";
+import { IceCream } from "./constants";
 
 export const changeNetwork =async(chainId)=>{
     try {
@@ -29,10 +31,19 @@ export const getSwapData = async(amount,path)=>{
         const baseLink = 'https://aggregator.icecreamswap.com/60808'
         const from = path[0]
         const to = path[1]
-        console.log(from, to)
-        console.log(amount)
+        
         const data  = await fetch(`${baseLink}?src=${from}&dst=${to}&amount=${amount}`);
         return data
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const getErc20Decimals=async(token, user)=>{
+    try {
+        const ca = await connectContract(token, IERC20ABI, user);
+        const tx = await ca.decimals();
+        return tx;
     } catch (error) {
         console.log(error)
     }
@@ -56,6 +67,15 @@ export const connectContract = async (address, abi, account) => {
         return null;
     }
 };
+
+export const getIceContract =async(addr)=>{
+    try {
+        const ca = connectContract(IceCream[0].contract , IceCream[0].abi, addr);
+        return ca;
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 export const connectMetamask = async()=>{
     try {
