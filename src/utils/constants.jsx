@@ -22,5 +22,5 @@ export const IERC20ABI = JJ.abi
 export const IceRouterAddress = "0x698a912F8CA34Df9b46E6Ea4A2B2DB0B7151b083" 
 
 export const IceCream = [
-    {contract:"0x0f021E3506FA2cfeCA67d7aa23A4E42909685bbf",abi:cc.abi}
+    {contract:"0xCD14F844b2252acd557cd7AE1C915FA12f9254af",abi:cc.abi}
 ]

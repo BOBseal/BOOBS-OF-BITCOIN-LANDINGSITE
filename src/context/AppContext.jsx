@@ -133,14 +133,28 @@ export const AppProvider =({children})=>{
                 return
             }
             const caTkn = await getErc20CA(token,user.wallet);
+            
             console.log(caTkn)
-            //const tt = await caTkn.approve(IceCream[0].contract, amount);
+            const ss =await caTkn.allowance(user.wallet,IceCream[0].contract);
+            const intSs = parseInt(Number(ss));
+            const intAm = parseInt(Number(amount));
+            console.log(intSs,intAm,"Allowances")
+            if(intSs < intAm){
+                const tt = await caTkn.approve(IceCream[0].contract, amount);
+            tt.wait(1).then(async (receipt) => {
+                alert(`Approve Successful hash : ${tt.hash}`)
             //tt.then(async()=>{
-                const exec = await ca.swap(dataObj.tx.to,dataObj.tx.data,token,amount,{value:dataObj.tx.value, gasLimit:500000});
-                console.log(exec)
+                const exec = await ca.swap(dataObj.tx.to,dataObj.tx.data,token,amount,{value:dataObj.tx.value, gasLimit:300000});
+                exec.wait(1).then(async(a)=>{alert(`swap complete txhash: ${exec.hash}`);})
+                return exec
+                //console.log(exec)
             //}).catch(e=>{
                 //console.log(e);
             //})
+        })} else {
+            const execs = await ca.swap(dataObj.tx.to,dataObj.tx.data,token,amount,{value:dataObj.tx.value});
+            execs.wait(1).then(async(a)=>{alert(`swap complete txhash: ${exec.hash}`);})
+        }
         } catch (error) {
             console.log(error)
         }

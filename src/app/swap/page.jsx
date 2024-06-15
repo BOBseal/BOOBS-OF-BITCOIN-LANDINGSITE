@@ -22,7 +22,13 @@ const Page = () => {
       data:null
     })
     const setTokenIn =(e)=>{
-        setDexStates({...dexStates, tokenIn:e})
+      if(dexStates.tokenOut===e){
+
+        alert("Token In & Token Out Cannot be Same")
+        return
+      }  
+      setDexStates({...dexStates, tokenIn:e})
+        
     }
 
 
@@ -31,10 +37,19 @@ const Page = () => {
     };
 
     const setTokenOut=(e)=>{
-        setDexStates({...dexStates, tokenOut:e})
+      if(dexStates.tokenIn===e){
+        alert("Token In & Token Out Cannot be Same")
+        return
+      }  
+      setDexStates({...dexStates, tokenOut:e})
+        
     }
 
     const setAmountIn= async(e)=>{
+      if(!user.wallet){
+        alert("Connect Wallet First")
+        return
+      }
         setDexStates({...dexStates, amountIn:e})
         const tokenOut = findTokenByTicker(dexStates.tokenOut);
         const tokenIn = findTokenByTicker(dexStates.tokenIn);
